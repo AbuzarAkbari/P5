@@ -19,6 +19,8 @@ public class OVChipkaart {
         this.klasse = klasse;
         this.saldo = saldo;
         this.reiziger = reiziger;
+        this.producten = new ArrayList<>();
+        this.setProducten(producten);
     }
 
     public void setKaartNummer(int kaartNummer) {
@@ -69,14 +71,25 @@ public class OVChipkaart {
         this.producten = producten;
     }
 
-    public void addProduct(Product product) {
-        if(!producten.contains(product)) {
-            producten.add(product);
+    public boolean voegProductToe(Product product){
+        boolean toegevoegd = false;
+        for (Product p : producten){
+            if(!p.equals(product)){
+                producten.add(product);
+                toegevoegd = true;
+            }
         }
+        return toegevoegd;
     }
-    public void removeProduct(Product product) {
-
-        producten.remove(product);
+    public boolean verwijderProduct(Product product){
+        boolean verwijderd = false;
+        for (Product p : producten){
+            if(!p.equals(product)){
+                producten.remove(product);
+                verwijderd = true;
+            }
+        }
+        return verwijderd;
     }
 
 
@@ -84,10 +97,12 @@ public class OVChipkaart {
     @Override
     public String toString() {
         return "OVChipkaart{" +
-                "kaartNummer=" + kaartNummer +
-                ", geldigTot=" + geldigTot +
+                "kaart_nummer=" + kaartNummer +
+                ", geldig_tot=" + geldigTot +
                 ", klasse=" + klasse +
                 ", saldo=" + saldo +
+                ", reiziger=" + reiziger.getNaam() +
+                ", products=" + producten +
                 '}';
     }
 

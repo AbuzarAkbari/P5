@@ -80,26 +80,24 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
         return false;
     }
 
+    @Override
     public OVChipkaart findByKaartNummer(int kaartNummer){
 
         try{
-            PreparedStatement prepStatement = conn.prepareStatement("SELECT * FROM ov_chipkaart JOIN ov_chipkaart_product ON ov_chipkaart.kaart_nummer = ov_chipkaart_product.kaart_nummer WHERE kaart_nummer=?");
+            PreparedStatement prepStatement = conn.prepareStatement("SELECT * from ov_chipkaart WHERE kaart_nummer = ?");
             prepStatement.setInt(1,kaartNummer);
             ResultSet result = prepStatement.executeQuery();
 
             OVChipkaart ovChipkaart = null;
 
-
             while (result.next()) {
-
                 int klasse = result.getInt("klasse");
                 Date geldigTot = result.getDate("geldig_tot");
                 double saldo = result.getDouble("saldo");
                 int reizigerId = result.getInt("reiziger_id");
                 int productNummer = result.getInt("product_nummer");
                 ovChipkaart = new OVChipkaart(kaartNummer, geldigTot, klasse, saldo, rdao.findById(reizigerId));
-
-                ovChipkaart.setProducten(pdao.findByProductNummer(productNummer));
+                ovChipkaart.setProducten(pdao.findByChipkaart(ovChipkaart));
 
             }
 
@@ -118,7 +116,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
     public List<OVChipkaart> findByReiziger(Reiziger reiziger)  {
         try {
 //            relatie naar product
-            PreparedStatement prepStatement = conn.prepareStatement("SELECT * FROM ov_chipkaart JOIN ov_chipkaart_product ON ov_chipkaart.kaart_nummer = ov_chipkaart_product.kaart_nummer WHERE reiziger_id=?");
+            PreparedStatement prepStatement = conn.prepareStatement("SELECT * FROM ov_chipkaart WHERE reiziger_id = ? ");
             prepStatement.setInt(1, reiziger.getId());
 
             ResultSet result = prepStatement.executeQuery();
@@ -134,9 +132,8 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
                 int productNummer = result.getInt("product_nummer");
 
                 OVChipkaart kaart = new OVChipkaart(kaartNummer,geldigTot,klasse,saldo,reiziger);
-
                 ovChipkaarten.add(kaart);
-                kaart.setProducten(pdao.findByProductNummer(productNummer));
+                kaart.setProducten(pdao.findByChipkaart(kaart));
 
             }
             prepStatement.close();
@@ -152,10 +149,8 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
     public List<OVChipkaart> findAll()  {
         try {
 //            relatie naar product
-            PreparedStatement prepStatement = conn.prepareStatement("SELECT * FROM ov_chipkaart JOIN ov_chipkaart_product ON ov_chipkaart.kaart_nummer = ov_chipkaart_product.kaart_nummer");
+            PreparedStatement prepStatement = conn.prepareStatement("SELECT * from ov_chipkaart");
             ResultSet result = prepStatement.executeQuery();
-            ArrayList<Product> producten = new ArrayList();
-
             List<OVChipkaart> ovChipkaarten = new ArrayList<>();
 
             while(result.next()){
@@ -169,8 +164,7 @@ public class OVChipkaartDAOPsql implements OVChipkaartDAO {
 
                 OVChipkaart kaart = new OVChipkaart(kaartNummer, geldigTot, klasse, saldo, rdao.findById(reizigerId));
                 ovChipkaarten.add(kaart);
-                kaart.setProducten(pdao.findByProductNummer(productNummer));
-
+                kaart.setProducten(pdao.findByChipkaart(kaart));
 
             }
             prepStatement.close();

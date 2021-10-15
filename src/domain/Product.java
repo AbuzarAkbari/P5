@@ -10,9 +10,19 @@ public class Product {
     private String beschrijving;
     private double prijs;
 
-    private ArrayList<OVChipkaart> OvChipkaarten;
+//    private ArrayList<OVChipkaart> OvChipkaarten;
 
-//    private ArrayList<Integer> ovChipkaarten = new ArrayList<Integer>();
+    private ArrayList<Integer> ovChipkaartNummers;
+
+    public Product(int productNummer, String naam, String beschrijving, double prijs) {
+        this.productNummer = productNummer;
+        this.naam = naam;
+        this.beschrijving = beschrijving;
+        this.prijs = prijs;
+        ovChipkaartNummers = new ArrayList<>();
+    }
+
+
 
     public int getProductNummer() {
         return productNummer;
@@ -46,22 +56,45 @@ public class Product {
         this.prijs = prijs;
     }
 
-    public ArrayList<OVChipkaart> getOvChipkaarten() { return OvChipkaarten; }
+    public ArrayList<Integer> getOvChipkaartNummers() {
+        return ovChipkaartNummers;
+    }
 
-    public void setOvChipkaarten(List<OVChipkaart> OvChipkaarten) {
-        this.OvChipkaarten = (ArrayList<OVChipkaart>) OvChipkaarten;
-        for (OVChipkaart ovChipkaart : this.OvChipkaarten) {
-            ArrayList<Product> producten = new ArrayList();
-            producten.add(this);
-            ovChipkaart.setProducten(producten);
+    public void setOvChipkaartNummers(ArrayList<Integer> ovChipkaarts) {
+        this.ovChipkaartNummers = ovChipkaarts;
+    }
+
+    public boolean voegOvChipKaartToe(OVChipkaart ovChipkaart){
+        boolean toegevoegd = false;
+        for (Integer kaartNummer : ovChipkaartNummers){
+            if(kaartNummer != ovChipkaart.getKaartNummer()){
+                ovChipkaartNummers.add(kaartNummer);
+                toegevoegd = true;
+            }
         }
+        return toegevoegd;
+    }
+    public boolean verwijderOvChipKaart(OVChipkaart ovChipkaart){
+        boolean verwijderd = false;
+        for (Integer kaartNummer : ovChipkaartNummers){
+            if(kaartNummer == ovChipkaart.getKaartNummer()){
+                ovChipkaartNummers.remove(kaartNummer);
+                verwijderd = true;
+            }
+        }
+        return verwijderd;
     }
 
-    public Product(int productNummer, String naam, String beschrijving, double prijs) {
-        this.productNummer = productNummer;
-        this.naam = naam;
-        this.beschrijving = beschrijving;
-        this.prijs = prijs;
+    @Override
+    public String toString() {
+        return "Product{" +
+                "productNumme=" + productNummer +
+                ", naam='" + naam + '\'' +
+                ", beschrijving='" + beschrijving + '\'' +
+                ", prijs=" + prijs +
+                ", ovChipkaartNummers=" + ovChipkaartNummers +
+                '}';
     }
+
 
 }
